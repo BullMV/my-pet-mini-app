@@ -1,46 +1,64 @@
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-let data = JSON.parse(localStorage.getItem("pet")) || null;
+let data = JSON.parse(localStorage.getItem("pet"));
 
-function show(id) {
-  document.querySelectorAll("div").forEach(d => d.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
+function hideAll() {
+  document.getElementById("screen-login").classList.add("hidden");
+  document.getElementById("screen-pet").classList.add("hidden");
+  document.getElementById("screen-game").classList.add("hidden");
+  document.getElementById("screen-dead").classList.add("hidden");
 }
 
 function saveBirthdate() {
   const birth = document.getElementById("birthdate").value;
-  if (!birth) return alert("Enter birthdate");
+  if (!birth) {
+    alert("Please enter your birth date");
+    return;
+  }
+
   data = {
-    birth,
+    birth: birth,
     pet: null,
     hunger: 100,
     clean: 100,
     lastSeen: Date.now()
   };
+
   localStorage.setItem("pet", JSON.stringify(data));
-  show("screen-pet");
+  hideAll();
+  document.getElementById("screen-pet").classList.remove("hidden");
 }
 
 function selectPet(pet) {
   data.pet = pet;
-  updateStats();
+  data.lastSeen = Date.now();
   localStorage.setItem("pet", JSON.stringify(data));
-  show("screen-game");
+  showGame();
 }
 
-function updateStats() {
-  const days = Math.floor((Date.now() - new Date(data.birth)) / 86400000);
-  document.getElementById("pet-name").innerText = data.pet;
-  document.getElementById("pet-age").innerText = "Age: " + days + " days";
+function showGame() {
+  const inactiveDays = Math.floor(
+    (Date.now() - data.lastSeen) / 86400000
+  );
 
+  if (inactiveDays >= 3) {
+    hideAll();
+    document.getElementById("screen-dead").classList.remove("hidden");
+    return;
+  }
+
+  hideAll();
+  document.getElementById("screen-game").classList.remove("hidden");
+
+  const ageDays = Math.floor(
+    (Date.now() - new Date(data.birth)) / 86400000
+  );
+
+  document.getElementById("pet-name").innerText = data.pet;
+  document.getElementById("pet-age").innerText = `Age: ${ageDays} days`;
   document.getElementById("hunger").innerText = data.hunger;
   document.getElementById("clean").innerText = data.clean;
-
-  const inactiveDays = Math.floor((Date.now() - data.lastSeen) / 86400000);
-  if (inactiveDays >= 3) {
-    show("screen-dead");
-  }
 }
 
 function feed() {
@@ -54,14 +72,14 @@ function cleanPet() {
 }
 
 function play() {
-  data.hunger -= 10;
+  data.hunger = Math.max(0, data.hunger - 10);
   save();
 }
 
 function save() {
   data.lastSeen = Date.now();
   localStorage.setItem("pet", JSON.stringify(data));
-  updateStats();
+  showGame();
 }
 
 function resetGame() {
@@ -69,9 +87,13 @@ function resetGame() {
   location.reload();
 }
 
-if (!data) show("screen-login");
-else if (!data.pet) show("screen-pet");
-else show("screen-game");
+/* INIT */
+hideAll();
 
-updateStats();
-
+if (!data) {
+  document.getElementById("screen-login").classList.remove("hidden");
+} else if (!data.pet) {
+  document.getElementById("screen-pet").classList.remove("hidden");
+} else {
+  showGame();
+}
