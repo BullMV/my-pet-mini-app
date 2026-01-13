@@ -1,1 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My Pet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🐾 My Pet</h1>
+
+<div id="screen-login">
+  <p>Enter your birth date</p>
+  <input type="date" id="birthdate">
+  <button onclick="saveBirthdate()">Continue</button>
+</div>
+
+<div id="screen-pet" class="hidden">
+  <p>Choose your pet</p>
+  <div class="pets">
+    <button onclick="selectPet('Cat')">🐱 Cat</button>
+    <button onclick="selectPet('Dog')">🐶 Dog</button>
+    <button onclick="selectPet('Panda')">🐼 Panda</button>
+    <button onclick="selectPet('Lion')">🦁 Lion</button>
+    <button onclick="selectPet('Rabbit')">🐰 Rabbit</button>
+    <button onclick="selectPet('Dragon')">🐉 Dragon</button>
+    <button onclick="selectPet('Parrot')">🦜 Parrot</button>
+  </div>
+</div>
+
+<div id="screen-game" class="hidden">
+  <h2 id="pet-name"></h2>
+  <p id="pet-age"></p>
+
+  <p>🍖 Hunger: <span id="hunger"></span></p>
+  <p>🧼 Cleanliness: <span id="clean"></span></p>
+
+  <button onclick="feed()">Feed</button>
+  <button onclick="cleanPet()">Clean</button>
+  <button onclick="play()">Play</button>
+</div>
+
+<div id="screen-dead" class="hidden">
+  <h2>💀 Your pet has died</h2>
+  <p>You forgot it for 3 days.</p>
+  <button onclick="resetGame()">Start Over</button>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
 
